@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  database:
+    build: ./database
+    container_name: control_pg
+    environment:
+      POSTGRES_DB: control_system
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - pgdata:/var/lib/postgresql/data
+
+  service_users:
+    build: ./service_users
+    container_name: svc_users
+    ports:
+      - "5001:5001"
+    environment:
+      DATABASE_URL: postgres://admin:admin123@database:5432/control_system
+      JWT_SECRET: supersecret
+    depends_on:
+      - database
+
+  service_orders:
+    build: ./service_orders
+    container_name: svc_orders
+    ports:
+      - "5002:5002"
+    environment:
+      DATABASE_URL: postgres://admin:admin123@database:5432/control_system
+      JWT_SECRET: supersecret
+    depends_on:
+      - database
+      - service_users
+
+  api_gateway:
+    build: ./api_gateway
+    container_name: api_gateway
+    ports:
+      - "8080:8080"
+    environment:
+      USERS_SERVICE_URL: http://service_users:5001
+      ORDERS_SERVICE_URL: http://service_orders:5002
+      JWT_SECRET: supersecret
+    depends_on:
+      - service_users
+      - service_orders
+
+volumes:
+  pgdata:
