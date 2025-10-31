@@ -13,3 +13,8 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(logger);
+
+// env
+const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
+const USERS_SERVICE_URL = process.env.USERS_SERVICE_URL || "http://service_users:5001";
+const ORDERS_SERVICE_URL = process.env.ORDERS_SERVICE_URL || "http://service_orders:5002";
