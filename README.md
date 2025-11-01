@@ -1,1 +1,1 @@
-# 2
+Запуск проекта: docker-compose up --build
