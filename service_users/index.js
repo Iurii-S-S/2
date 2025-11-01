@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Joi from "joi";
 import pino from "pino-http";
-import pool from "./db/db.js";
+import pool from "./database.js";
 
 const app = express();
 const logger = pino();
